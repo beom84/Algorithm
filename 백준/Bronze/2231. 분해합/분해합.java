@@ -1,3 +1,5 @@
+
+
 import java.util.Scanner;
 
 public class Main {
@@ -5,8 +7,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         int N = sc.nextInt();
-        String n = N + "";
-        int N_length =  n.length();
+        int N_length =  String.valueOf(N).length();
         int result = 0;
 
         for(int i = (N - (N_length * 9)); i < N; i++) {
@@ -28,3 +29,6 @@ public class Main {
 
     }
 }
+
+// 1. 그냥 노가다로 분해합 만큼 뺀다음에 구하는것...
+// 2.
