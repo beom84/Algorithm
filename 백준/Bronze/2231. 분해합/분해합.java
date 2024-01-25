@@ -1,12 +1,9 @@
-
-
-import java.util.Scanner;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        int N = sc.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
         int N_length =  String.valueOf(N).length();
         int result = 0;
 
@@ -25,10 +22,9 @@ public class Main {
                 break;
             }
         }
-        System.out.println(result);
-
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(String.valueOf(result));
+        bw.newLine();
+        bw.flush();
     }
 }
-
-// 1. 그냥 노가다로 분해합 만큼 뺀다음에 구하는것...
-// 2.
