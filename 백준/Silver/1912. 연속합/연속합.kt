@@ -1,15 +1,17 @@
-import kotlin.math.max
+fun main() = with(System.`in`.bufferedReader()) {
+    val n = readLine().toInt()
+    val array = readLine().split(" ").map { it.toInt() }
+    var sum = array[0]
+    var max = sum
 
-fun main() {
-    val n = readln().toInt()
-    var sum = 0
-    var sumMax = 0
-    var max = -1000
-    readln().split(" ").map {
-        val num = it.toInt()
-        max = max(max, num)
-        sum = if (sum + num < 0) 0 else sum + num
-        sumMax = max(sum,sumMax)
+    for (i in 1..array.lastIndex) {
+        if (sum < 0) {
+            sum = if (array[i] < 0 && array[i] <= sum) sum else array[i]
+        }else {
+            sum += array[i]
+            if(sum < 0) sum = 0
+            if(max < sum ) max = sum
+        }
     }
-    print(if(max<0) max else max(max,sumMax))
+    println(if(sum<0)sum else max)
 }
