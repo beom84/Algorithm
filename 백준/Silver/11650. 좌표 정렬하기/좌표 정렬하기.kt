@@ -1,16 +1,24 @@
+import java.util.*
+
 fun main() = with(System.`in`.bufferedReader()) {
     val N = readLine().toInt()
-    val location = Array(N) {0 to 0}
-    repeat(N){ idx->
-        val (x,y) = readLine().split(" ").map { it.toInt() }
-        location[idx] = Pair(x,y)
+    val sb = StringBuilder()
+    val location = Array(N) { 0 to 0 }
+
+    repeat(N) { idx ->
+        val st = StringTokenizer(readLine())
+        location[idx] = Pair(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()))
     }
 
     val temp = Array(N) { 0 to 0 }
 
     mergeSort(location, temp, 0, location.lastIndex)
 
-    for (i in location) println("${i.first} ${i.second}")
+    for (i in location) {
+        sb.append("${i.first} ${i.second}\n")
+    }
+
+    println(sb.toString())
 }
 
 fun mergeSort(arr: Array<Pair<Int, Int>>, temp: Array<Pair<Int, Int>>, start: Int, end: Int) {
@@ -18,8 +26,8 @@ fun mergeSort(arr: Array<Pair<Int, Int>>, temp: Array<Pair<Int, Int>>, start: In
 
     if (start < end) {
         mergeSort(arr, temp, start, mid)
-        mergeSort(arr, temp, mid+1, end)
-        merge(arr, temp, start, mid+1, end)
+        mergeSort(arr, temp, mid + 1, end)
+        merge(arr, temp, start, mid + 1, end)
     }
 }
 
