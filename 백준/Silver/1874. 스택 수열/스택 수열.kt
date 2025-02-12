@@ -5,18 +5,18 @@ fun main() = with(System.`in`.bufferedReader()) {
     val stack = ArrayList<Int>()
     repeat(n) {
         val num = readLine().toInt()
-        if (stack.contains(num)) {
-            if (stack.removeLast() == num) sb.append("-").append("\n")
-            else {
-                println("NO")
-                return@with
-            }
+        if (stack.isNotEmpty() && stack.last() == num) {
+            stack.removeLast()
+            sb.append("-").append("\n")
         } else {
             while (index <= num) {
                 sb.append("+").append("\n")
                 stack.add(index++)
             }
-            stack.removeLast()
+            if (stack.removeLast() != num) {
+                println("NO")
+                return@with
+            }
             sb.append("-").append("\n")
         }
     }
