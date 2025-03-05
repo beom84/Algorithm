@@ -28,7 +28,7 @@ fun printNumber(number: Int, count: Int) {
         return
     }
 
-    for (i in number until totalNum) {
+    for (i in number until totalNum - (6 - count) + 1){
         visited[i] = true
         printNumber(number = i + 1, count = count + 1)
         visited[i] = false
