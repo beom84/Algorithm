@@ -19,7 +19,7 @@ import java.util.*
  */
 
 private val bw = System.`out`.bufferedWriter()
-private lateinit var apple: LinkedList<Pair<Int, Int>>
+private lateinit var apple: MutableSet<Pair<Int, Int>> //탐색이 간편한게 Set 사용
 private val snake = LinkedList<Pair<Int, Int>>()
 private val dx = intArrayOf(-1, 0, 1, 0)
 private val dy = intArrayOf(0, 1, 0, -1)
@@ -48,8 +48,8 @@ fun rotateDirection(dir: Int, turn: String): Int =
 
 fun main() = with(System.`in`.bufferedReader()) {
     val N = readLine().toInt()
-    val appleNum = readLine().toInt()
-    apple = LinkedList()
+    val appleNum = readLine().toInt() 
+    apple = mutableSetOf()
     repeat(appleNum) {
         apple.add(readLine().split(" ").map { it.toInt() }.let { (x, y) -> x - 1 to y - 1 }
         )
@@ -57,26 +57,28 @@ fun main() = with(System.`in`.bufferedReader()) {
 
     var time = 1
     var direction = 1 // 0:"UP", 1:"RIGHT", 2:"DOWN", 3:"LEFT"
-    val X = readLine().toInt()
-    val rotateTime = Array(X) {
+    val commandCount = readLine().toInt() // 읽기 편하게 commandCount 명시해주자!
+    val rotateTime = Array(commandCount) {
         readLine().split(" ").let { (x, y) -> x.toInt() to y }
     }
-    var rotateIdx = 0
+    var commandIdx = 0
 
     snake.addFirst(0 to 0)
     while (true) {
         val snakeHead = snake[0]
-        val x = snakeHead.first + dx[direction]
-        val y = snakeHead.second + dy[direction]
-        if (snake.contains(x to y) || x >= N || y >= N || x < 0 || y < 0) break
+        val nx = snakeHead.first + dx[direction] // 움직인거니까 앞으로 nx ny로 표현하자
+        val ny = snakeHead.second + dy[direction]
+        val next = nx to ny
+        if (snake.contains(next) ||  nx !in 0 until N || ny !in 0 until N) break
+        //x >= N || y >= N || x < 0 || y < 0 -> nx !in 0 until N || ny !in 0 until N
 
         moveSnake(snake, direction)
-        if (rotateIdx != X && time == rotateTime[rotateIdx].first) {
-            direction = rotateDirection(direction, rotateTime[rotateIdx++].second)
+        
+        if (commandIdx != commandCount && time == rotateTime[commandIdx].first) {
+            direction = rotateDirection(direction, rotateTime[commandIdx++].second)
         }
         time++
     }
 
-    bw.append("${time}")
-    bw.flush()
+    bw.append("${time}").flush()
 }
