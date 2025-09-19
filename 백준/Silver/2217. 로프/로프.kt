@@ -4,17 +4,18 @@ private fun main() = with(System.`in`.bufferedReader()){
     val n  = readLine().toInt()
     val ropes = IntArray(n)
 
-    repeat(n){ i->
+    for (i in 0 until n) {
         ropes[i] = readLine().toInt()
     }
 
-   val rope = ropes.sortedWith(compareBy { it })
+    ropes.sort()
+
 
     var max = 0
     var count = n
 
-    for(i in rope.indices){
-        max = max(max,rope[i]*count--)
+    for(i in ropes.indices){
+        max = max(max,ropes[i]*count--)
     }
 
     println(max)
