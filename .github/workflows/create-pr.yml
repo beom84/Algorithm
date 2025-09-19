@@ -3,7 +3,7 @@ name: Create Pull Request from Submission
 on:
   push:
     branches:
-      - submissions
+      - main
 
 jobs:
   create-pull-request:
