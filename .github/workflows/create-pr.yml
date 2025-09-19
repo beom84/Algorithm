@@ -12,54 +12,46 @@ jobs:
       # 1. 리포지토리 코드를 가져옵니다.
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # 2. README.md 파일을 파싱하여 PR 제목과 본문을 준비합니다. (⭐️ 핵심 변경 부분)
-      - name: Parse README for PR Content
-        id: pr_content
-        run: |
-          # 업로드된 README.md 파일을 찾습니다.
-          README_FILE=$(find . -type f -name "README.md" -print -quit)
-
-          if [[ -z "$README_FILE" ]]; then
-            echo "README.md 파일을 찾을 수 없습니다."
-            exit 1
-          fi
-
-          # README의 첫 줄을 PR 제목으로 사용합니다 (앞의 '# ' 제거).
-          PR_TITLE=$(head -n 1 "$README_FILE" | sed 's/# //g')
-
-          # README에서 필요한 섹션을 추출합니다.
-          # grep 명령어는 특정 패턴을 포함하는 라인을 찾아줍니다.
-          LINK_SECTION=$(grep '\[문제 링크\]' "$README_FILE")
-          PERF_SECTION=$(grep -A 1 '### 성능 요약' "$README_FILE") # '성능 요약' 헤더와 그 다음 줄
-          CATEGORY_SECTION=$(grep -A 1 '### 분류' "$README_FILE") # '분류' 헤더와 그 다음 줄
-          DATE_SECTION=$(grep -A 1 '### 제출 일자' "$README_FILE") # '제출 일자' 헤더와 그 다음 줄
-
-          # 여러 줄로 된 PR 본문을 만듭니다.
-          {
-            echo 'body<<EOF'
-            echo "${LINK_SECTION}"
-            echo ""
-            echo "${PERF_SECTION}"
-            echo ""
-            echo "${CATEGORY_SECTION}"
-            echo ""
-            echo "${DATE_SECTION}"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
-
-          # 추출한 제목을 출력 변수로 설정합니다.
-          echo "title=${PR_TITLE}" >> "$GITHUB_OUTPUT"
-
-      # 3. 추출한 내용으로 PR을 생성합니다.
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "백준 문제 풀이 자동 업데이트"
-          # ⭐️ 이전 단계에서 생성한 제목과 본문을 사용하도록 수정
-          title: ${{ steps.pr_content.outputs.title }}
-          body: ${{ steps.pr_content.outputs.body }}
-          base: submissions
-          branch: main
-          delete-branch: false
+          
+          # 2. README.md 파일을 파싱하여 PR 제목과 본문을 준비합니다. (⭐️ 방어 코드 추가 버전)
+                - name: Parse README for PR Content
+                id: pr_content
+                run: |
+                  README_FILE=$(find . -type f -name "README.md" -print -quit)
+                  
+                  if [[ -z "$README_FILE" ]]; then
+                    echo "README.md 파일을 찾을 수 없습니다."
+                    exit 1
+                  fi
+                  
+                  # ⭐️ [수정 1] grep 실패 시에도 스크립트가 중단되지 않도록 '|| true' 추가
+                  PR_TITLE=$(head -n 1 "$README_FILE" | sed 's/# //g' || true)
+                  LINK_SECTION=$(grep '\[문제 링크\]' "$README_FILE" || true)
+                  PERF_SECTION=$(grep -A 1 '### 성능 요약' "$README_FILE" || true)
+                  CATEGORY_SECTION=$(grep -A 1 '### 분류' "$README_FILE" || true)
+                  DATE_SECTION=$(grep -A 1 '### 제출 일자' "$README_FILE" || true)
+                  
+                  PR_BODY="" # PR 본문을 저장할 변수 초기화
+                  
+                  # ⭐️ [수정 2] 각 섹션의 내용이 실제로 존재할 때만 PR 본문에 추가
+                  if [[ -n "$LINK_SECTION" ]]; then
+                    PR_BODY+="${LINK_SECTION}\n\n"
+                  fi
+                  if [[ -n "$PERF_SECTION" ]]; then
+                    PR_BODY+="${PERF_SECTION}\n\n"
+                  fi
+                  if [[ -n "$CATEGORY_SECTION" ]]; then
+                    PR_BODY+="${CATEGORY_SECTION}\n\n"
+                  fi
+                  if [[ -n "$DATE_SECTION" ]]; then
+                    PR_BODY+="${DATE_SECTION}\n"
+                  fi
+                  
+                  # 여러 줄로 된 본문을 GitHub Actions 출력으로 전달
+                  {
+                    echo 'body<<EOF'
+                    echo "${PR_BODY}"
+                    echo 'EOF'
+                  } >> "$GITHUB_OUTPUT"
+                  
+                  echo "title=${PR_TITLE}" >> "$GITHUB_OUTPUT"
