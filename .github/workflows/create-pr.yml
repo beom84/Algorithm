@@ -60,6 +60,6 @@ jobs:
           # ⭐️ 이전 단계에서 생성한 제목과 본문을 사용하도록 수정
           title: ${{ steps.pr_content.outputs.title }}
           body: ${{ steps.pr_content.outputs.body }}
-          base: main
-          branch: submissions
+          base: submissions
+          branch: main
           delete-branch: false
