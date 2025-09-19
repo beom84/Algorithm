@@ -3,7 +3,7 @@ name: Create Pull Request from Submission
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   create-pull-request:
@@ -58,6 +58,6 @@ jobs:
           commit-message: "백준 문제 풀이 자동 업데이트"
           title: ${{ steps.pr_content.outputs.title }}
           body: ${{ steps.pr_content.outputs.body }}
-          base: complete
-          branch: main
+          base: main
+          branch: develop
           delete-branch: false
