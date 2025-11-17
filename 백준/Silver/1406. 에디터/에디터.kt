@@ -1,41 +1,49 @@
-fun main() = with(System.`in`.bufferedReader()) {
+import java.util.*
+
+private val bw = System.out.bufferedWriter()
+private val leftStack = ArrayDeque<Char>()
+private val rightStack = ArrayDeque<Char>()
+
+private fun main() = with(System.`in`.bufferedReader()) {
     val str = readLine()
-    val mainList = str.map { it }.toMutableList()
-    val subList = mutableListOf<Char>()
-    val n = readLine().toInt()
-    val sb = StringBuilder()
+    str.forEach { leftStack.addLast(it) }
 
-    repeat(n) {
-        val command = readLine().split(" ")
-        when (command[0]) {
-            "L" -> {
-                if (mainList.size != 0) {
-                    val subLastIndex = subList.size
-                    subList.add(subLastIndex, mainList.removeLast())
-                }
-            }
+    repeat(readLine().toInt()) {
+        val commander = readLine()
+        val command = commander[0]
+        val c = if (command == 'P') commander[2] else null
 
-            "D" -> {
-                if (subList.size != 0) {
-                    val mainLastIndex = mainList.size
-                    mainList.add(mainLastIndex, subList.removeLast())
-                }
-            }
-
-            "B" -> {
-                if (mainList.size != 0)
-                    mainList.removeLast()
-            }
-
-            "P" -> {
-                val mainLastIndex = mainList.size
-                mainList.add(mainLastIndex, command[1][0])
-            }
-        }
+        handleEditor(command, c)
     }
 
-    for (i in mainList) sb.append(i)
-    for (i in subList.lastIndex downTo 0) sb.append(subList[i])
+    leftStack.forEach { bw.write(it.toString()) }
+    rightStack.reversed().forEach { bw.write(it.toString()) }
 
-    println(sb)
+    bw.flush()
+}
+
+fun handleEditor(command: Char, c: Char?) {
+    when (command) {
+        'L' -> {
+            if (leftStack.isNotEmpty()) {
+                rightStack.addLast(leftStack.removeLast())
+            }
+        }
+
+        'D' -> {
+            if (rightStack.isNotEmpty()) {
+                leftStack.addLast(rightStack.removeLast())
+            }
+        }
+
+        'B' -> {
+            if (leftStack.isNotEmpty()) {
+                leftStack.removeLast()
+            }
+        }
+
+        'P' -> {
+            leftStack.addLast(c!!)
+        }
+    }
 }
