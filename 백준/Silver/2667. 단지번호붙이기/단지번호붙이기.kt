@@ -11,7 +11,7 @@ fun main() = with(System.`in`.bufferedReader()) {
     repeat(N) { x ->
         val str = readLine()
         repeat(N) { y ->
-            board[x][y] = str[y].digitToInt()
+            board[x][y] = str[y]- '0'
         }
     }
 
