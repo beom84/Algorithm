@@ -1,0 +1,6 @@
+-- 코드를 입력하세요
+SELECT NAME,count(*) as COUNT -- 두번이상 쓰인 이름과 쓰인 횟수
+from ANIMAL_INS
+where NAME is not null
+group by NAME having count(*) >= 2
+order by NAME asc
