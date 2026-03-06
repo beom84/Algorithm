@@ -1,64 +1,68 @@
-import java.util.*
 
-/*
-    정점의 개수 N -> 그래프 크기
-    간선의 개수 M ->
-    시작하는 정점의 번호 V
+import java.util.StringTokenizer
 
-
- */
-
-lateinit var graph: Array<BooleanArray>
-lateinit var visited: BooleanArray
-var n: Int = 0
-var v: Int = 0
 private val bw = System.`out`.bufferedWriter()
 
 fun main() = with(System.`in`.bufferedReader()) {
-    val str = readLine().split(" ").map { it.toInt() }
-    n = str[0]
-    val m = str[1]
-    v = str[2]
+    val line = readLine().split(" ").map { it.toInt() }
+    val N = line[0] // 정점의 개수
+    val M = line[1] // 간선의 개수
+    val V = line[2] // 시작 정점
 
-    graph = Array(n + 1) { BooleanArray(n + 1) }
-    visited = BooleanArray(n + 1)
+    val graph = Array(N + 1) { ArrayList<Int>() } // 1부터 시작
 
-    repeat(m) {
-        val (a, b) = readLine().split(" ").map { it.toInt() }
-        graph[a][b] = true
-        graph[b][a] = true
+    repeat(M) {
+        val line = StringTokenizer(readLine())
+        val start = line.nextToken().toInt()
+        val end = line.nextToken().toInt()
+        graph[start].add(end)
+        graph[end].add(start)
     }
-    dfs(v)
-    visited.fill(false)
-    bw.append("\n")
-    bfs()
-    bw.flush()
-}
 
-fun dfs(node: Int) {
-    visited[node] = true
-    bw.append("$node ")
-
-    for (i in 1..n) {
-        if (graph[node][i] && !visited[i]) dfs(i)
+    for (i in 1..N) {
+        graph[i].sort()
     }
-}
 
-private fun bfs() {
-    val queue = LinkedList<Int>()
+    val dfsVisited = BooleanArray(N + 1)
+    dfsVisited[V] = true
 
-    queue.add(v)
-    visited[v] = true
-
-    while (!queue.isEmpty()) {
-        val node = queue.poll()
+    fun dfs(depth: Int, node: Int) {
+        if (depth == N + 1) {
+            return
+        }
         bw.append("$node ")
 
-        for (i in 1..n) {
-            if (graph[node][i] && !visited[i]) {
-                queue.add(i)
-                visited[i] = true
+        for (nextNode in graph[node]) {
+            if (!dfsVisited[nextNode]) {
+                dfsVisited[nextNode] = true
+
+                dfs(depth + 1, nextNode)
             }
         }
     }
+
+    fun bfs() {
+        val queue = ArrayDeque<Int>()
+        val visited = BooleanArray(N + 1)
+        queue.addLast(V)
+        visited[V] = true
+
+        while (!queue.isEmpty()) {
+            val currentNode = queue.removeFirst()
+            bw.append("$currentNode ")
+
+            for (nextNode in graph[currentNode]) {
+                if (visited[nextNode]) continue
+                queue.addLast(nextNode)
+                visited[nextNode] = true
+            }
+        }
+    }
+    dfs(1, V)
+
+    bw.append("\n")
+
+    bfs()
+
+    bw.flush()
 }

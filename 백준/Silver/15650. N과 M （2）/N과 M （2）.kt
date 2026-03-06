@@ -1,28 +1,25 @@
 private val bw = System.`out`.bufferedWriter()
-private lateinit var visited: BooleanArray
-private lateinit var arr: IntArray
 
 fun main() = with(System.`in`.bufferedReader()) {
-    val (n, m) = readLine().split(" ").map { it.toInt() }
-    visited = BooleanArray(n)
-    arr = IntArray(m + 1)
+    val (N, M) = readLine().split(" ").map { it.toInt() }
+    val arr = IntArray(M)
+    val visited = BooleanArray(N + 1)
 
-    backTracking(1, n,m)
+    fun backTracking(depth: Int, idx: Int) {
+        if (depth == M) {
+            for (num in arr) {
+                bw.append("$num ")
+            }
+            bw.append("\n")
+
+            return
+        }
+
+        for (num in idx..N) {
+            arr[depth] = num
+            backTracking(depth + 1, num + 1)
+        }
+    }
+    backTracking(0, 1)
     bw.flush()
-}
-
-fun backTracking(k: Int, n: Int, m: Int) {
-    if (k == m + 1) {
-        for (i in 1..m) bw.write("${arr[i]} ")
-        bw.write("\n")
-        return
-    }
-
-    for (i in visited.indices) {
-        if (visited[i] || arr[k - 1] > i + 1) continue
-        visited[i] = true
-        arr[k] = i + 1
-        backTracking(k + 1, n, m)
-        visited[i] = false
-    }
 }
